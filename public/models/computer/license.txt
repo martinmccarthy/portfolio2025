@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Computer
+* source:	https://sketchfab.com/3d-models/low-poly-computer-d62ac723c3fe44b983acc9c2e38e5138
+* author:	glcalde (https://sketchfab.com/glcalde)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Computer" (https://sketchfab.com/3d-models/low-poly-computer-d62ac723c3fe44b983acc9c2e38e5138) by glcalde (https://sketchfab.com/glcalde) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

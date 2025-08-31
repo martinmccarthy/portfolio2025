@@ -1,0 +1,11 @@
+.idesign { 
+    color:'white';
+    position: 'absolute';
+    top: 16;
+    left: 16;
+    margin: 0;
+    font-family: 'AzeretMono';
+    letter-spacing: '0.04em' ;
+    width: 100vw;
+    z-index: 2;
+}
