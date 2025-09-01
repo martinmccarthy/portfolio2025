@@ -102,6 +102,174 @@ function ScrambleText({ text, duration = 700, fps = 60 }) {
   return <span style={{ display: 'inline-block', mixBlendMode: 'difference' }}>{display}</span>
 }
 
+function BackgroundAudio({ src, volume = 0.4 }) {
+  const audioRef = useRef(null)
+  useEffect(() => {
+    const a = new Audio()
+    a.src = src
+    // a.loop = true
+    a.volume = volume
+    audioRef.current = a
+    const tryPlay = () => {
+      a.play().catch(() => {})
+      window.removeEventListener('pointerdown', tryPlay)
+      window.removeEventListener('keydown', tryPlay)
+      window.removeEventListener('touchstart', tryPlay)
+    }
+    window.addEventListener('pointerdown', tryPlay)
+    window.addEventListener('keydown', tryPlay)
+    window.addEventListener('touchstart', tryPlay)
+    return () => {
+      a.pause()
+      a.src = ''
+    }
+  }, [src])
+  useEffect(() => {
+    if (audioRef.current) audioRef.current.volume = volume
+  }, [volume])
+  return null
+}
+
+
+function AudioControl({ volume, setVolume }) {
+  const [open, setOpen] = useState(false)
+  const prevVolRef = useRef(volume)
+  const dragRef = useRef(false)
+  const setFromEvent = (e) => {
+    const el = e.currentTarget
+    const rect = el.getBoundingClientRect()
+    const x = (e.clientX ?? (e.touches?.[0]?.clientX || 0)) - rect.left
+    const v = Math.min(1, Math.max(0, x / rect.width))
+    setVolume(v)
+  }
+
+  
+  return (
+    <div
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+      style={{
+        position: 'fixed',
+        top: '2vh',
+        right: '1vw',
+        zIndex: 10,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px',
+        mixBlendMode: 'difference'
+      }}
+    >
+      <AnimatePresence>
+        {open && (
+<motion.div
+  initial={{ width: 0, opacity: 0, x: 10 }}
+  animate={{ width: 140, opacity: 1, x: 0 }}
+  exit={{ width: 0, opacity: 0, x: 10 }}
+  transition={{ type: 'tween', duration: 0.2 }}
+  style={{
+    overflow: 'hidden',
+    border: '1px solid rgba(255,255,255,0.35)',
+    borderRadius: 9999,
+    padding: '8px 10px',
+    background: 'transparent'
+  }}
+>
+  <div
+    onMouseDown={(e) => { dragRef.current = true; setFromEvent(e) }}
+    onMouseMove={(e) => { if (dragRef.current) setFromEvent(e) }}
+    onMouseUp={() => { dragRef.current = false }}
+    onMouseLeave={() => { dragRef.current = false }}
+    onTouchStart={(e) => { dragRef.current = true; setFromEvent(e) }}
+    onTouchMove={setFromEvent}
+    onTouchEnd={() => { dragRef.current = false }}
+    style={{
+      width: 120,
+      height: 12,
+      border: '1.5px solid white',
+      borderRadius: 9999,
+      position: 'relative',
+      cursor: 'pointer',
+      background: 'transparent',
+      mixBlendMode: 'difference'
+    }}
+  >
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        height: '100%',
+        width: `${Math.round(volume * 100)}%`,
+        background: 'white',
+        borderRadius: 9999,
+        transition: 'width 120ms linear',
+      }}
+    />
+  </div>
+    </motion.div>
+            )}
+          </AnimatePresence>
+          <div
+      onClick={() => {
+        if (volume > 0) {
+          prevVolRef.current = volume
+          setVolume(0)
+        } else {
+          setVolume(prevVolRef.current || 0.35)
+        }
+      }}
+      style={{
+        width: 36,
+        height: 36,
+        borderRadius: '9999px',
+        border: '1.5px solid white',
+        display: 'grid',
+        placeItems: 'center',
+        cursor: 'pointer',
+        background: 'transparent',
+        mixBlendMode: 'difference'
+      }}
+    >
+    {volume === 0 ? (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ mixBlendMode: 'difference' }}
+      >
+        <polygon points="11 4 6 8 2 8 2 16 6 16 11 20 11 4" />
+        <line x1="16" y1="9" x2="21" y2="15" />
+        <line x1="21" y1="9" x2="16" y2="15" />
+      </svg>
+    ) : (
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="white"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ mixBlendMode: 'exclusion' }}
+      >
+        <polygon points="11 4 6 8 2 8 2 16 6 16 11 20 11 4" />
+        <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+        <path d="M18 6a8 8 0 0 1 0 12" />
+      </svg>
+    )}
+
+</div>
+
+    </div>
+  )
+}
+
 export default function App() {
   function Scroll() {
     return (
@@ -152,9 +320,31 @@ export default function App() {
   const labels = ['Design Experiences', 'Create Solutions', 'Personalize Your Brand', 'Develop Games']
   const [labelIndex, setLabelIndex] = useState(0)
   const handleSwap = () => setLabelIndex(i => (i + 1) % labels.length)
+  const [volume, setVolume] = useState(0.35)
+  const [showMenu, setShowMenu] = useState(false)
 
+  useEffect(() => {
+    const trigger = (e) => {
+      if (!showMenu) {
+        e.preventDefault()
+        window.scrollTo(0, 0)
+        setShowMenu(true)
+      }
+    }
+    window.addEventListener('wheel', trigger, { passive: false })
+    window.addEventListener('touchmove', trigger, { passive: false })
+    return () => {
+      window.removeEventListener('wheel', trigger)
+      window.removeEventListener('touchmove', trigger)
+    }
+  }, [showMenu])
+  
+
+  
   return (
     <>
+      <BackgroundAudio src="/audio/bg.mp3" volume={volume} />
+      <AudioControl volume={volume} setVolume={setVolume} />
       <AnimatedCursor
           color="255, 255, 255"
           clickables={[
@@ -174,7 +364,61 @@ export default function App() {
       </h1>
       <h1 className="myname" style={{ color:'white', position: 'absolute', top: '2vh', margin: 0, marginLeft: '3vw', fontFamily: 'monospace', letterSpacing: '0.04em', textAlign: 'center', fontFamily: "AzeretMono" }}>martin mccarthy</h1>
       <Scroll />
-      <Menu  />
+<AnimatePresence>
+  {showMenu && (
+    <motion.div
+      initial={{ height: 0 }}
+      animate={{ height: '100vh' }}
+      exit={{ height: 0 }}
+      transition={{ duration: 1.4, ease: 'easeInOut' }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 20,
+        overflow: 'hidden',
+      }}
+    >
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          initial={{ y: -200, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{
+            delay: i * 0.1,
+            duration: 0.8,
+          }}
+          style={{
+            width: '100%',
+            height: `${100 / 8}vh`,
+            background: 'rgba(255,255,255,0.9)',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+          }}
+        />
+      ))}
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.8, duration: 0.6 }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'auto',
+          backdropFilter: 'blur(6px)',
+          WebkitBackdropFilter: 'blur(6px)',
+        }}
+      >
+        <Menu onExitTop={() => setShowMenu(false)} />
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
     </>
   )
 }

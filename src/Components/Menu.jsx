@@ -4,7 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import './Menu.css'
 import MenuItem from './MenuItem'
 
-function Menu() {
+function Menu({ onExitTop }) {
+
   const [projectIndex, setProjectIndex] = useState(0)
   const [direction, setDirection] = useState(0)
   const accumRef = useRef(0)
@@ -28,19 +29,31 @@ function Menu() {
     return i
   }
 
-  const handleWheel = (e) => {
-    if (lockRef.current) return
-    accumRef.current += e.deltaY
-    const threshold = 80
-    if (Math.abs(accumRef.current) > threshold) {
-      const dir = accumRef.current > 0 ? 1 : -1
-      setDirection(dir)
-      setProjectIndex((i) => clampIndex(i + dir))
+// Menu.jsx — replace handleWheel with this
+const handleWheel = (e) => {
+  if (lockRef.current) return
+  accumRef.current += e.deltaY
+  const threshold = 80
+  if (Math.abs(accumRef.current) > threshold) {
+    const dir = accumRef.current > 0 ? 1 : -1
+
+    if (dir < 0 && projectIndex === 0) {
       accumRef.current = 0
       lockRef.current = true
+      onExitTop?.()                 // tell parent to close the menu
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       setTimeout(() => (lockRef.current = false), 650)
+      return
     }
+
+    setDirection(dir)
+    setProjectIndex((i) => clampIndex(i + dir))
+    accumRef.current = 0
+    lockRef.current = true
+    setTimeout(() => (lockRef.current = false), 650)
   }
+}
+
 
   // Keep the outer transition lightweight (no rotate/blur) so the <Canvas> inside stays crisp.
   const variants = {
