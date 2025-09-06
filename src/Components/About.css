@@ -1,0 +1,17 @@
+.aboutpage {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;   
+    text-align: center;
+    font-family: 'AzeretMono';
+    letter-spacing: '0.04em' ;
+    background-color: black;
+}
+
+.about-content {
+    color: #fff;
+    width: 50%;
+}

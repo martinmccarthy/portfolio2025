@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import * as THREE from 'three'
 import Menu from './Components/Menu'
 import AnimatedCursor from "react-animated-cursor";
+import About from './Components/About'
 
 function WireModel({ src, y = 0, rotationRef, ...props }) {
   const { scene } = useGLTF(src)
@@ -145,68 +146,67 @@ function AudioControl({ volume, setVolume }) {
 
   
   return (
-    <div
+    <div className='button'
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       style={{
         position: 'fixed',
         top: '2vh',
         right: '1vw',
-        zIndex: 10,
+        zIndex: 30,
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        mixBlendMode: 'difference'
+        mixBlendMode: 'difference',
       }}
     >
       <AnimatePresence>
         {open && (
-<motion.div
-  initial={{ width: 0, opacity: 0, x: 10 }}
-  animate={{ width: 140, opacity: 1, x: 0 }}
-  exit={{ width: 0, opacity: 0, x: 10 }}
-  transition={{ type: 'tween', duration: 0.2 }}
-  style={{
-    overflow: 'hidden',
-    border: '1px solid rgba(255,255,255,0.35)',
-    borderRadius: 9999,
-    padding: '8px 10px',
-    background: 'transparent'
-  }}
->
-  <div
-    onMouseDown={(e) => { dragRef.current = true; setFromEvent(e) }}
-    onMouseMove={(e) => { if (dragRef.current) setFromEvent(e) }}
-    onMouseUp={() => { dragRef.current = false }}
-    onMouseLeave={() => { dragRef.current = false }}
-    onTouchStart={(e) => { dragRef.current = true; setFromEvent(e) }}
-    onTouchMove={setFromEvent}
-    onTouchEnd={() => { dragRef.current = false }}
-    style={{
-      width: 120,
-      height: 12,
-      border: '1.5px solid white',
-      borderRadius: 9999,
-      position: 'relative',
-      cursor: 'pointer',
-      background: 'transparent',
-      mixBlendMode: 'difference'
-    }}
-  >
-    <div
-      style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        height: '100%',
-        width: `${Math.round(volume * 100)}%`,
-        background: 'white',
-        borderRadius: 9999,
-        transition: 'width 120ms linear',
-      }}
-    />
-  </div>
-    </motion.div>
+        <motion.div
+          initial={{ width: 0, opacity: 0, x: 10 }}
+          animate={{ width: 140, opacity: 1, x: 0 }}
+          exit={{ width: 0, opacity: 0, x: 10 }}
+          transition={{ type: 'tween', duration: 0.2 }}
+          style={{
+            overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.35)',
+            borderRadius: 9999,
+            padding: '8px 10px',
+            background: 'transparent'
+          }}
+        >
+          <div
+            onMouseDown={(e) => { dragRef.current = true; setFromEvent(e) }}
+            onMouseMove={(e) => { if (dragRef.current) setFromEvent(e) }}
+            onMouseUp={() => { dragRef.current = false }}
+            onMouseLeave={() => { dragRef.current = false }}
+            onTouchStart={(e) => { dragRef.current = true; setFromEvent(e) }}
+            onTouchMove={setFromEvent}
+            onTouchEnd={() => { dragRef.current = false }}
+            style={{
+              width: 120,
+              height: 12,
+              border: '1.5px solid white',
+              borderRadius: 9999,
+              position: 'relative',
+              background: 'transparent',
+              mixBlendMode: 'difference'
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                height: '100%',
+                width: `${Math.round(volume * 100)}%`,
+                background: 'white',
+                borderRadius: 9999,
+                transition: 'width 120ms linear',
+              }}
+            />
+          </div>
+          </motion.div>
             )}
           </AnimatePresence>
           <div
@@ -225,7 +225,6 @@ function AudioControl({ volume, setVolume }) {
         border: '1.5px solid white',
         display: 'grid',
         placeItems: 'center',
-        cursor: 'pointer',
         background: 'transparent',
         mixBlendMode: 'difference'
       }}
@@ -247,30 +246,27 @@ function AudioControl({ volume, setVolume }) {
         <line x1="21" y1="9" x2="16" y2="15" />
       </svg>
     ) : (
-      <svg
-        width="18"
-        height="18"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="white"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        style={{ mixBlendMode: 'exclusion' }}
-      >
-        <polygon points="11 4 6 8 2 8 2 16 6 16 11 20 11 4" />
-        <path d="M15.5 8.5a5 5 0 0 1 0 7" />
-        <path d="M18 6a8 8 0 0 1 0 12" />
-      </svg>
-    )}
-
-</div>
+        <svg width="18" height="18" viewBox="0 0 24 24"
+          fill="none"
+          stroke="white"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          style={{ mixBlendMode: 'exclusion' }}
+        >
+          <polygon points="11 4 6 8 2 8 2 16 6 16 11 20 11 4" />
+          <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+          <path d="M18 6a8 8 0 0 1 0 12" />
+        </svg>)}
+      </div>
 
     </div>
   )
 }
 
 export default function App() {
+  const [showAbout, setShowAbout] = useState(false);
+
   function Scroll() {
     return (
       <div className="scrollmessage">
@@ -324,15 +320,32 @@ export default function App() {
   const [showMenu, setShowMenu] = useState(false)
 
   useEffect(() => {
+    let lastTouchY = 0
+
     const trigger = (e) => {
-      if (!showMenu) {
+      let isScrollingDown = false
+
+      if (e.type === 'wheel') {
+        isScrollingDown = e.deltaY > 0
+      } else if (e.type === 'touchmove') {
+        const touch = e.touches[0]
+        isScrollingDown = touch.clientY < lastTouchY
+        lastTouchY = touch.clientY
+      }
+
+      if (isScrollingDown && !showMenu) {
         e.preventDefault()
         window.scrollTo(0, 0)
         setShowMenu(true)
       }
     }
+
     window.addEventListener('wheel', trigger, { passive: false })
+    window.addEventListener('touchstart', (e) => {
+      lastTouchY = e.touches[0].clientY
+    }, { passive: false })
     window.addEventListener('touchmove', trigger, { passive: false })
+
     return () => {
       window.removeEventListener('wheel', trigger)
       window.removeEventListener('touchmove', trigger)
@@ -348,7 +361,7 @@ export default function App() {
       <AnimatedCursor
           color="255, 255, 255"
           clickables={[
-              ".model"
+              ".button"
           ]}
           innerStyle={{mixBlendMode: 'exclusion'}}
           outerStyle={{mixBlendMode: 'exclusion'}}
@@ -359,66 +372,94 @@ export default function App() {
         <Scene onSwap={handleSwap} models={models} />
         <OrbitControls enablePan={false} enableZoom={false} />
       </Canvas>
-      <h1 className="idesign" style={{ color:'white', position: 'absolute', top: '70vh', margin: 0, fontFamily: 'monospace', fontSize: '.8em', letterSpacing: '0.04em', width: '100vw', textAlign: 'center', fontFamily: "AzeretMono" }}>
+      <h1 className="idesign" style={{ color:'white', position: 'absolute', top: '70vh', margin: 0, fontSize: '.8em', letterSpacing: '0.04em', width: '100vw', textAlign: 'center', fontFamily: "AzeretMono" }}>
         i <ScrambleText key={labels[labelIndex].toUpperCase()} text={labels[labelIndex].toLowerCase()} duration={650} />
       </h1>
-      <h1 className="myname" style={{ color:'white', position: 'absolute', top: '2vh', margin: 0, marginLeft: '3vw', fontFamily: 'monospace', letterSpacing: '0.04em', textAlign: 'center', fontFamily: "AzeretMono" }}>martin mccarthy</h1>
+      <h1 className="myname" style={{ color:'white', position: 'absolute', top: '2vh', margin: 0, marginLeft: '3vw', letterSpacing: '0.04em', textAlign: 'center', fontFamily: "AzeretMono" }}>martin mccarthy</h1>
       <Scroll />
-<AnimatePresence>
-  {showMenu && (
-    <motion.div
-      initial={{ height: 0 }}
-      animate={{ height: '100vh' }}
-      exit={{ height: 0 }}
-      transition={{ duration: 1.4, ease: 'easeInOut' }}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 20,
-        overflow: 'hidden',
-      }}
-    >
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={i}
-          initial={{ y: -200, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{
-            delay: i * 0.1,
-            duration: 0.8,
-          }}
-          style={{
-            width: '100%',
-            height: `${100 / 8}vh`,
-            background: 'rgba(255,255,255,0.9)',
-            borderBottom: '1px solid rgba(255,255,255,0.08)',
-          }}
-        />
-      ))}
+      <AnimatePresence>
+        {showMenu && (
+          <motion.div
+            initial={{ height: 0 }}
+            animate={{ height: '100vh' }}
+            exit={{ height: 0 }}
+            transition={{ duration: 1.4, ease: 'easeInOut' }}
+            style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              zIndex: 20,
+              overflow: 'hidden',
+            }}
+          >
+            {[...Array(8)].map((_, i) => (
+              <motion.div
+                key={i}
+                initial={{ y: -200, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{
+                  delay: i * 0.1,
+                  duration: 0.8,
+                }}
+                style={{
+                  width: '100%',
+                  height: `${100 / 8}vh`,
+                  background: 'rgba(255,255,255,0.9)',
+                  borderBottom: '1px solid rgba(255,255,255,0.08)',
+                }}
+              />
+            ))}
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'auto',
-          backdropFilter: 'blur(6px)',
-          WebkitBackdropFilter: 'blur(6px)',
-        }}
-      >
-        <Menu onExitTop={() => setShowMenu(false)} />
-      </motion.div>
-    </motion.div>
-  )}
-</AnimatePresence>
-
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                overflow: 'auto',
+                backdropFilter: 'blur(6px)',
+                WebkitBackdropFilter: 'blur(6px)',
+              }}
+            >
+              <Menu onExitTop={() => {setShowMenu(false); console.log('exiting')}} onExitBottom={() => setShowAbout(true)}/>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showAbout && (
+          <motion.div
+            initial={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
+            animate={{ clipPath: 'circle(140% at 90% 10%)', opacity: 1 }}
+            exit={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
+            transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
+            style={{
+              position: 'fixed',
+              inset: 0,
+              zIndex: 25,
+              background: 'rgba(255,255,255,0.96)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
+              overflow: 'hidden'
+            }}
+          >
+            <motion.div
+              initial={{ y: 24, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 24, opacity: 0 }}
+              transition={{ duration: 0.45, ease: 'easeOut', delay: 0.25 }}
+              style={{ height: '100%' }}
+            >
+              <About onExitTop={() => { setShowAbout(false); setShowMenu(true); }} />            
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
