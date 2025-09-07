@@ -85,7 +85,6 @@
     padding-top: max(10svh, calc(env(safe-area-inset-top, 0px) + 12px));
   }
   .about-content {
-    width: 94vw;
     border-width: 1.5px;
     padding: clamp(14px, 5vw, 20px);
   }
