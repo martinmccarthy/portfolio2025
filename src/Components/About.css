@@ -1,35 +1,99 @@
+/* About.css — responsive + mobile-friendly */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
 .aboutpage {
-    width: 100vw;
-    height: 100vh;
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;   
-    text-align: center;
-    font-family: 'AzeretMono';
-    letter-spacing: '0.04em' ;
-    background-color: black;
+  width: 100vw;
+  height: 100%;
+  min-height: 100svh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'AzeretMono', monospace;
+  letter-spacing: 0.04em;
+  background-color: #000;
+  padding: clamp(12px, 3vw, 24px);
+  padding-left: max(clamp(12px, 3vw, 24px), env(safe-area-inset-left));
+  padding-right: max(clamp(12px, 3vw, 24px), env(safe-area-inset-right));
 }
 
 .about-content {
-    color: #fff;
-    width: 50%;
-    border: #fff solid 2px;
-    padding: 20px;
+  color: #fff;
+  width: min(780px, 88vw);
+  border: 2px solid #fff;
+  border-radius: 12px;
+  padding: clamp(16px, 4vw, 28px);
+  background: rgba(255,255,255,0.02);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  text-align: left;
+  word-break: break-word;
+  hyphens: auto;
 }
 
+.about-content h1 {
+  text-align: center;
+  font-size: clamp(1.4rem, 4.8vw, 2rem);
+  line-height: 1.15;
+  margin: 0 0 0.75rem 0;
+}
+
+.about-content p {
+   font-size: clamp(0.2rem, 2.8vw, 1rem);
+  line-height: 1.6;
+  margin: 0.5rem 0 0;
+}
+
+/* Icon row */
 .about-icons {
-  margin-top: 2rem;
+  margin-top: clamp(16px, 4vw, 24px);
   display: flex;
   justify-content: center;
-  gap: 1.5rem;
+  gap: clamp(1rem, 4vw, 1.5rem);
 }
 
 .about-icons a {
-  color: white;
-  transition: color 0.2s ease;
+  color: #fff;
+  transition: transform 0.15s ease, color 0.2s ease, opacity 0.2s ease;
+  touch-action: manipulation;
 }
 
-.icon {
-    cursor: none;
+.about-icons a:active { transform: scale(0.96); }
+
+/* Only hide cursor on desktop; keep touch friendly on mobile */
+@media (hover: hover) and (pointer: fine) {
+  .icon { cursor: none; }
+}
+@media (hover: none) and (pointer: coarse) {
+  .icon { cursor: auto; }
+}
+
+/* Tablet adjustments */
+@media (max-width: 1024px) {
+  .aboutpage { align-items: flex-start; }
+  .about-content {
+    width: min(820px, 92vw);
+  }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .aboutpage {
+    padding-top: max(10svh, calc(env(safe-area-inset-top, 0px) + 12px));
+  }
+  .about-content {
+    width: 94vw;
+    border-width: 1.5px;
+    padding: clamp(14px, 5vw, 20px);
+  }
+  .about-content p { line-height: 1.55; }
+}
+
+/* Very small phones */
+@media (max-width: 360px) {
+  .about-content h1 { font-size: 1.15rem; }
+  .about-content p  { font-size: 0.9rem; }
 }

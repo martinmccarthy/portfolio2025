@@ -1,3 +1,4 @@
+// About.jsx (no logic changes; just mobile-friendly container/styling relies on CSS below)
 import { useEffect } from 'react'
 import './About.css'
 import { ScrambleOnce } from './Scramble'
@@ -6,10 +7,8 @@ import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa'
 function About({ onExitTop }) {
   useEffect(() => {
     let lastTouchY = 0
-
     const trigger = (e) => {
       let isScrollingUp = false
-
       if (e.type === 'wheel') {
         isScrollingUp = e.deltaY < 0
       } else if (e.type === 'touchmove') {
@@ -17,24 +16,15 @@ function About({ onExitTop }) {
         isScrollingUp = touch.clientY > lastTouchY
         lastTouchY = touch.clientY
       }
-
       if (isScrollingUp) {
         e.preventDefault()
         window.scrollTo(0, 0)
         onExitTop?.()
       }
     }
-
     window.addEventListener('wheel', trigger, { passive: false })
-    window.addEventListener(
-      'touchstart',
-      (e) => {
-        lastTouchY = e.touches[0].clientY
-      },
-      { passive: false }
-    )
+    window.addEventListener('touchstart', (e) => { lastTouchY = e.touches[0].clientY }, { passive: false })
     window.addEventListener('touchmove', trigger, { passive: false })
-
     return () => {
       window.removeEventListener('wheel', trigger)
       window.removeEventListener('touchmove', trigger)
@@ -46,49 +36,30 @@ function About({ onExitTop }) {
       <div className="about-content">
         <h1>about me</h1>
         <p>
-          <ScrambleOnce text="
-          Hi, I'm Martin!
-          I am a PhD student in Computer Science at the University of Central Florida, where
-          I also completed both my Bachelor’s and Master’s degrees in Computer Science. Growing up in
-          Florida with an early passion for graphic design helped me fall in love with
-          our local theme parks, where immersive experiences are designed with deep care and detail." />
+          <ScrambleOnce text="Hi, I'm Martin! I am a PhD student in Computer Science at the University of Central Florida, where I also completed both my Bachelor’s and Master’s degrees in Computer Science. Growing up in Florida with an early passion for graphic design helped me fall in love with our local theme parks, where immersive experiences are designed with deep care and detail." />
         </p>
         <p>
-          <ScrambleOnce text="
-          I've carried that passion into my current PhD research, where I utilize Virtual Reality
-          to design collaborative work environments that enhance the development
-          cycle of themed entertainment attractions. My research goal is to contribute to the design
-          of themed experiences in ways that merge storytelling, technology, and creativity."/>
+          <ScrambleOnce text="I've carried that passion into my current PhD research, where I utilize Virtual Reality to design collaborative work environments that enhance the development cycle of themed entertainment attractions. My research goal is to contribute to the design of themed experiences in ways that merge storytelling, technology, and creativity."/>
         </p>
         <p>
-          <ScrambleOnce text="
-          I design and develop immersive experiences that bring ideas to life. My expertise
-          spans virtual reality, augmented reality, artificial intelligence, and digital twin
-          systems. I combine technical knowledge with creative direction to deliver solutions
-          that are interactive, engaging, and built to inspire.
-          "/>
+          <ScrambleOnce text="I design and develop immersive experiences that bring ideas to life. My expertise spans virtual reality, augmented reality, artificial intelligence, and digital twin systems. I combine technical knowledge with creative direction to deliver solutions that are interactive, engaging, and built to inspire."/>
         </p>
         <p>
-          <ScrambleOnce text="
-          Whether it's building a real time simulation, creating a branded experience, or
-          developing a game, my focus is always on producing work that connects with people.
-          "/>
+          <ScrambleOnce text="Whether it's building a real time simulation, creating a branded experience, or developing a game, my focus is always on producing work that connects with people."/>
         </p>
 
         <div className="about-icons">
-        <a href="https://www.linkedin.com/in/martinmccarthy2/" target="_blank" rel="noopener noreferrer" className="icon">
-          <FaLinkedin size={30} />
-        </a>
-        <a href="https://github.com/martinmccarthy" target="_blank" rel="noopener noreferrer" className="icon">
-          <FaGithub size={30} />
-        </a>
-        <a href="mailto:martin.mccarthy@ucf.edu" className="icon">
-          <FaEnvelope size={30} />
-        </a>
+          <a href="https://www.linkedin.com/in/martinmccarthy2/" target="_blank" rel="noopener noreferrer" className="icon" aria-label="LinkedIn">
+            <FaLinkedin size={30} />
+          </a>
+          <a href="https://github.com/martinmccarthy" target="_blank" rel="noopener noreferrer" className="icon" aria-label="GitHub">
+            <FaGithub size={30} />
+          </a>
+          <a href="mailto:martin.mccarthy@ucf.edu" className="icon" aria-label="Email">
+            <FaEnvelope size={30} />
+          </a>
+        </div>
       </div>
-      </div>
-
-      
     </div>
   )
 }

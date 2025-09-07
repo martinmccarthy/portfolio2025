@@ -1,7 +1,7 @@
 // MenuItem.jsx
 import { Canvas, useFrame } from '@react-three/fiber'
 import { OrbitControls, useGLTF } from '@react-three/drei'
-import { Suspense, useMemo, useRef, useEffect } from 'react'
+import { Suspense, useMemo, useRef, useEffect, useState } from 'react'
 import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
 import * as THREE from 'three'
 import './Menu.css'
@@ -43,10 +43,7 @@ function MediaTile({ src, href, alt = '' }) {
   const my = useMotionValue(0)
   const rX = useTransform(my, [-0.5, 0.5], [10, -10])
   const rY = useTransform(mx, [-0.5, 0.5], [-10, 10])
-  const tZ = useTransform(
-    [mx, my],
-    ([x, y]) => 12 * Math.max(Math.abs(x), Math.abs(y))
-  )
+  const tZ = useTransform([mx, my], ([x, y]) => 12 * Math.max(Math.abs(x), Math.abs(y)))
 
   const onMove = (e) => {
     const el = e.currentTarget
@@ -69,6 +66,7 @@ function MediaTile({ src, href, alt = '' }) {
       onMouseMove={onMove}
       onMouseLeave={onLeave}
       whileHover={{ scale: 1.06, zIndex: 2, boxShadow: '0 16px 40px rgba(0,0,0,0.25)' }}
+      whileTap={{ scale: 0.98 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
     >
       <img src={src} alt={alt} className="bwimg" draggable="false" />
@@ -85,6 +83,14 @@ function MediaTile({ src, href, alt = '' }) {
 }
 
 export default function MenuItem({ name, desc, model, dir = 1, tech = [], media = [] }) {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 800px)').matches)
+  useEffect(() => {
+    const m = window.matchMedia('(max-width: 800px)')
+    const h = e => setIsMobile(e.matches)
+    m.addEventListener('change', h)
+    return () => m.removeEventListener('change', h)
+  }, [])
+
   const cardVariants = {
     initial: d => ({ x: d > 0 ? 40 : -40, rotateY: d > 0 ? 10 : -10, opacity: 0 }),
     animate: { x: 0, rotateY: 0, opacity: 1, transition: { type: 'spring', mass: 1.1, stiffness: 220, damping: 28 } },
@@ -99,8 +105,8 @@ export default function MenuItem({ name, desc, model, dir = 1, tech = [], media 
         key={`${key}-${i}`}
         src={`/icons/${key}.svg`}
         alt={key}
-        width={64}
-        height={64}
+        width={56}
+        height={56}
         className="techicon"
         initial={{ y: 8, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -111,45 +117,35 @@ export default function MenuItem({ name, desc, model, dir = 1, tech = [], media 
   const normalizedMedia = (media || []).map(m => typeof m === 'string' ? { src: m } : m)
 
   return (
-    <div className="menuitem" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', alignItems: 'stretch', height: '100%' }}>
+    <div className="menuitem">
       <motion.div
+        className="card"
         custom={dir}
         variants={cardVariants}
         initial="initial"
         animate="animate"
         exit="exit"
-        style={{ background: 'white', padding: '2rem', transformStyle: 'preserve-3d', willChange: 'transform, opacity', display: 'grid', gridTemplateRows: 'auto auto auto auto', gap: '1rem' }}
       >
         <h1 className="menutitle">{name}</h1>
         <h2 className="desc">{desc}</h2>
 
-        {normalizedMedia.length > 0 && (
-  <div
-    className="mediarow"
-    style={{
-      display: 'grid',
-      gridAutoFlow: 'row',
-      gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
-      gap: 0,
-      width: '100%',
-      alignItems: 'stretch'
-    }}
-  >
-    {normalizedMedia.map((m, i) => (
-      <MediaTile key={i} src={m.src} href={m.href} alt={m.alt} />
-    ))}
-  </div>
-)}
+        {!isMobile && normalizedMedia.length > 0 && (
+          <div className="mediarow">
+            {normalizedMedia.map((m, i) => (
+              <MediaTile key={i} src={m.src} href={m.href} alt={m.alt} />
+            ))}
+          </div>
+        )}
 
         {!!techIcons.length && (
-          <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <div className="techrow">
             {techIcons}
           </div>
         )}
       </motion.div>
 
-      <div style={{ background: 'black', overflow: 'hidden', position: 'relative', height: '100%', isolation: 'isolate', contain: 'layout paint size' }}>
-        <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ width: '100%', height: '100%', transform: 'none', willChange: 'auto' }}>
+      <div className="canvaswrap">
+        <Canvas dpr={[1, 1.6]} camera={{ position: [0, 0, 5], fov: 50 }}>
           <ambientLight intensity={0.6} />
           <Suspense fallback={null}>
             <WireModel src={model?.src} scale={model?.scale ?? 1} y={model?.y ?? 0} />

@@ -9,6 +9,8 @@ function Menu({ onExitTop, onExitBottom }) {
   const [direction, setDirection] = useState(0)
   const accumRef = useRef(0)
   const lockRef = useRef(false)
+  const touchStartY = useRef(0)
+  const lastY = useRef(0)
 
   const MenuItems = [
     { name: 'Rollercoaster Builder VR',
@@ -29,13 +31,16 @@ function Menu({ onExitTop, onExitBottom }) {
       tech: ['unity', 'csharp'], 
       media: [{ src: '/img/ids1.png' }, { src: '/img/ids2.png' }, { src: '/img/ids3.png' }, { src: '/img/ids4.png' }]
     },
-    
-      { name: '"House of Nevermore" Dark Ride Experience', desc: 'Ride conceptualized and designed from blue sky to pitching the ride to Universal Studios Creative. Step into the mind of Edgar Allan Poe as the haunting horrors of his stories come to life through the House of Nevermore. Visualizations shown in Unity Engine, mockups created in Photoshop and Blender. Designed a Unity Editor tool to manipulate ride vehicle view points along the ride path.', model: { scale: .8, src: '/models/raven/RavenRideVehicleUNITY.glb' }, 
+    { name: '"House of Nevermore" Dark Ride Experience',
+      desc: 'Ride conceptualized and designed from blue sky to pitching the ride to Universal Studios Creative. Step into the mind of Edgar Allan Poe as the haunting horrors of his stories come to life through the House of Nevermore. Visualizations shown in Unity Engine, mockups created in Photoshop and Blender. Designed a Unity Editor tool to manipulate ride vehicle view points along the ride path.',
+      model: { scale: .8, src: '/models/raven/RavenRideVehicleUNITY.glb' }, 
       tech: ['unity', 'c#'],
       media: [{ src: '/img/scene1.gif' }, { src: '/img/scene2.gif' }, { src: '/img/scene3.gif' }, { src: '/img/3.png' },  { src: '/img/4.png' },  { src: '/img/5.png' },  { src: '/img/ravenconceptimg.png' }]
     },
-    { name: 'Crime Report Digital Twin', desc: 'A proof-of-concept use case for Urban Digital Twins by modeling crime response path planning at the University of Central Florida. Leverages open-source data in the Unity 3D game engine, Cesium, and OpenStreetMap platform to create a scalable framework for traffic simulations generated through the Simulation of Urban MObility package.', model: { scale: .1, src: '/models/city/scene.gltf' }, tech: ['unity', 'c#', 'python'],
-media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
+    { name: 'Crime Report Digital Twin',
+      desc: 'A proof-of-concept use case for Urban Digital Twins by modeling crime response path planning at the University of Central Florida. Leverages open-source data in the Unity 3D game engine, Cesium, and OpenStreetMap platform to create a scalable framework for traffic simulations generated through the Simulation of Urban MObility package.',
+      model: { scale: .1, src: '/models/city/scene.gltf' }, tech: ['unity', 'c#', 'python'],
+      media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
     }
   ]
 
@@ -45,13 +50,12 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
     return i
   }
 
-  const handleWheel = (e) => {
+  const triggerMove = (deltaY) => {
     if (lockRef.current) return
-    accumRef.current += e.deltaY
-    const threshold = 80
+    accumRef.current += deltaY
+    const threshold = 70
     if (Math.abs(accumRef.current) > threshold) {
       const dir = accumRef.current > 0 ? 1 : -1
-
       if (dir < 0 && projectIndex === 0) {
         accumRef.current = 0
         lockRef.current = true
@@ -60,7 +64,6 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
         setTimeout(() => (lockRef.current = false), 650)
         return
       }
-
       if (dir > 0 && projectIndex === MenuItems.length - 1) {
         accumRef.current = 0
         lockRef.current = true
@@ -68,13 +71,29 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
         setTimeout(() => (lockRef.current = false), 650)
         return
       }
-
       setDirection(dir)
       setProjectIndex((i) => clampIndex(i + dir))
       accumRef.current = 0
       lockRef.current = true
       setTimeout(() => (lockRef.current = false), 650)
     }
+  }
+
+  const handleWheel = (e) => {
+    triggerMove(e.deltaY)
+  }
+
+  const onTouchStart = (e) => {
+    const t = e.touches[0]
+    touchStartY.current = t.clientY
+    lastY.current = t.clientY
+  }
+
+  const onTouchMove = (e) => {
+    const t = e.touches[0]
+    const dy = lastY.current - t.clientY
+    lastY.current = t.clientY
+    triggerMove(dy)
   }
 
   const variants = {
@@ -86,8 +105,10 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
   return (
     <div
       onWheel={handleWheel}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
       style={{
-        height: '100vh',
+        height: '100svh',
         width: '100vw',
         position: 'absolute',
         backgroundColor: 'white',
@@ -97,7 +118,7 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
         overflow: 'hidden'
       }}
     >
-      <div className="menubox" style={{ position: 'relative', width: '90vw', height: '90vh' }}>
+      <div className="menubox" style={{ position: 'relative', width: '92vw', height: '92vh' }}>
         <AnimatePresence mode="popLayout" initial={false} custom={direction}>
           <motion.div
             key={projectIndex}
@@ -106,11 +127,7 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
             initial="enter"
             animate="center"
             exit="exit"
-            style={{
-              width: '100%',
-              height: '100%',
-              willChange: 'transform, opacity',
-            }}
+            style={{ width: '100%', height: '100%', willChange: 'transform, opacity' }}
           >
             <MenuItem
               name={MenuItems[projectIndex].name}
@@ -127,4 +144,4 @@ media: [{ src: '/img/ucfdt.jpg' }, { src: '/img/cesium.png' }]
   )
 }
 
-export default Menu;
+export default Menu
