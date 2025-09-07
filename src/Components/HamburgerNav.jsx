@@ -133,7 +133,7 @@ export default function HamburgerNav({ active = 'home', onHome, onMenu, onAbout 
             style={dropdownStyle}
           >
             <Item label="Home"  onClick={onHome}  isActive={active === 'home'} />
-            <Item label="Menu"  onClick={onMenu}  isActive={active === 'menu'} />
+            <Item label="My Work"  onClick={onMenu}  isActive={active === 'menu'} />
             <Item label="About" onClick={onAbout} isActive={active === 'about'} />
           </motion.div>
         )}
