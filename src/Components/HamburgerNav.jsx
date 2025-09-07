@@ -50,7 +50,7 @@ export default function HamburgerNav({ active = 'home', onHome, onMenu, onAbout 
   const containerStyle = isMobile
     ? {
         position: 'fixed',
-        bottom: 'max(12px, calc(env(safe-area-inset-bottom, 0px) + 8px))',
+        bottom: 'max(0px, calc(env(safe-area-inset-bottom, 0px) + 8px))',
         left: '0.8vw',
         zIndex: 40,
         display: 'inline-block',
