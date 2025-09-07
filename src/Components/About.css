@@ -73,7 +73,7 @@
 
 /* Tablet adjustments */
 @media (max-width: 1024px) {
-  .aboutpage { align-items: flex-start; }
+  .aboutpage { align-items: flex-start; width: 92vw; }
   .about-content {
     width: min(820px, 92vw);
   }

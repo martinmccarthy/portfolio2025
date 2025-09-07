@@ -20,6 +20,12 @@ function Menu({ onExitTop, onExitBottom }) {
       tech: ['unity', 'c#'],
       media: [{ src: '/img/cave.jpg' }, { src: '/img/vrtable.jpg' }]
     },
+        { name: '"House of Nevermore" Dark Ride Experience',
+      desc: 'Ride conceptualized and designed from blue sky to pitching the ride to Universal Studios Creative. Step into the mind of Edgar Allan Poe as the haunting horrors of his stories come to life through the House of Nevermore. Visualizations shown in Unity Engine, mockups created in Photoshop and Blender. Designed a Unity Editor tool to manipulate ride vehicle view points along the ride path.',
+      model: { scale: .8, src: '/models/raven/RavenRideVehicleUNITY.glb' }, 
+      tech: ['unity', 'c#'],
+      media: [{ src: '/img/scene1.gif' }, { src: '/img/scene2.gif' }, { src: '/img/scene3.gif' }, { src: '/img/3.png' },  { src: '/img/4.png' },  { src: '/img/5.png' },  { src: '/img/ravenconceptimg.png' }]
+    },
     { name: 'Human Digital Twin', 
       desc: 'Metahuman AI instructor rendered onto a holographic display system which provides real-time guidance in training tasks. Designed in Unreal Engine connected to a Python backend running local large language models and computer vision to assess user performance.',
       model: { scale: 1.6, src: '/models/human/human.glb' }, tech: ['unreal engine', 'python'] ,
@@ -31,12 +37,7 @@ function Menu({ onExitTop, onExitBottom }) {
       tech: ['unity', 'csharp'], 
       media: [{ src: '/img/ids1.png' }, { src: '/img/ids2.png' }, { src: '/img/ids3.png' }, { src: '/img/ids4.png' }]
     },
-    { name: '"House of Nevermore" Dark Ride Experience',
-      desc: 'Ride conceptualized and designed from blue sky to pitching the ride to Universal Studios Creative. Step into the mind of Edgar Allan Poe as the haunting horrors of his stories come to life through the House of Nevermore. Visualizations shown in Unity Engine, mockups created in Photoshop and Blender. Designed a Unity Editor tool to manipulate ride vehicle view points along the ride path.',
-      model: { scale: .8, src: '/models/raven/RavenRideVehicleUNITY.glb' }, 
-      tech: ['unity', 'c#'],
-      media: [{ src: '/img/scene1.gif' }, { src: '/img/scene2.gif' }, { src: '/img/scene3.gif' }, { src: '/img/3.png' },  { src: '/img/4.png' },  { src: '/img/5.png' },  { src: '/img/ravenconceptimg.png' }]
-    },
+
     { name: 'Crime Report Digital Twin',
       desc: 'A proof-of-concept use case for Urban Digital Twins by modeling crime response path planning at the University of Central Florida. Leverages open-source data in the Unity 3D game engine, Cesium, and OpenStreetMap platform to create a scalable framework for traffic simulations generated through the Simulation of Urban MObility package.',
       model: { scale: .1, src: '/models/city/scene.gltf' }, tech: ['unity', 'c#', 'python'],
