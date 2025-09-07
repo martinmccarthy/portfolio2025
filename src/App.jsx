@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import Menu from './Components/Menu'
 import AnimatedCursor from "react-animated-cursor";
 import About from './Components/About'
+import HamburgerNav from './Components/HamburgerNav'
 
 function WireModel({ src, y = 0, rotationRef, ...props }) {
   const { scene } = useGLTF(src)
@@ -266,7 +267,6 @@ function AudioControl({ volume, setVolume }) {
 
 export default function App() {
   const [showAbout, setShowAbout] = useState(false);
-
   function Scroll() {
     return (
       <div className="scrollmessage">
@@ -353,20 +353,28 @@ export default function App() {
   }, [showMenu])
   
 
-  
+    const active = showAbout ? 'about' : (showMenu ? 'menu' : 'home')
+
   return (
     <>
-      <BackgroundAudio src="/audio/bg.mp3" volume={volume} />
+      <BackgroundAudio src="/audio/bg4.mp3" volume={volume} />
       <AudioControl volume={volume} setVolume={setVolume} />
       <AnimatedCursor
           color="255, 255, 255"
           clickables={[
-              ".button"
+              ".button", ".icon"
           ]}
           innerStyle={{mixBlendMode: 'exclusion'}}
           outerStyle={{mixBlendMode: 'exclusion'}}
 
       />
+      <HamburgerNav
+        active={active}
+        onHome={() => { setShowAbout(false); setShowMenu(false); window.scrollTo(0, 0); }}
+        onMenu={() => { setShowAbout(false); setShowMenu(true);  window.scrollTo(0, 0); }}
+        onAbout={() => { setShowMenu(false);  setShowAbout(true); window.scrollTo(0, 0); }}
+      />
+
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ width: '100vw', height: '100vh' }}>
         <ambientLight intensity={0.5} />
         <Scene onSwap={handleSwap} models={models} />

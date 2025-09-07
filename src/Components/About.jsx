@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import './About.css'
 import { ScrambleOnce } from './Scramble'
+import { FaLinkedin, FaGithub, FaEnvelope } from 'react-icons/fa'
 
 function About({ onExitTop }) {
   useEffect(() => {
@@ -53,24 +54,41 @@ function About({ onExitTop }) {
           our local theme parks, where immersive experiences are designed with deep care and detail." />
         </p>
         <p>
+          <ScrambleOnce text="
           I've carried that passion into my current PhD research, where I utilize Virtual Reality
           to design collaborative work environments that enhance the development
           cycle of themed entertainment attractions. My research goal is to contribute to the design
-          of themed experiences in ways that merge storytelling, technology, and creativity.
-          
-          
+          of themed experiences in ways that merge storytelling, technology, and creativity."/>
         </p>
         <p>
+          <ScrambleOnce text="
           I design and develop immersive experiences that bring ideas to life. My expertise
           spans virtual reality, augmented reality, artificial intelligence, and digital twin
           systems. I combine technical knowledge with creative direction to deliver solutions
           that are interactive, engaging, and built to inspire.
+          "/>
         </p>
         <p>
+          <ScrambleOnce text="
           Whether it's building a real time simulation, creating a branded experience, or
           developing a game, my focus is always on producing work that connects with people.
+          "/>
         </p>
+
+        <div className="about-icons">
+        <a href="https://www.linkedin.com/in/martinmccarthy2/" target="_blank" rel="noopener noreferrer" className="icon">
+          <FaLinkedin size={30} />
+        </a>
+        <a href="https://github.com/martinmccarthy" target="_blank" rel="noopener noreferrer" className="icon">
+          <FaGithub size={30} />
+        </a>
+        <a href="mailto:martin.mccarthy@ucf.edu" className="icon">
+          <FaEnvelope size={30} />
+        </a>
       </div>
+      </div>
+
+      
     </div>
   )
 }

@@ -14,4 +14,22 @@
 .about-content {
     color: #fff;
     width: 50%;
+    border: #fff solid 2px;
+    padding: 20px;
+}
+
+.about-icons {
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.about-icons a {
+  color: white;
+  transition: color 0.2s ease;
+}
+
+.icon {
+    cursor: none;
 }
