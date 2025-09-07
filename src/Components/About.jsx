@@ -49,7 +49,7 @@ function About({ onExitTop }) {
           <ScrambleOnce text="
           Hi, I'm Martin!
           I am a PhD student in Computer Science at the University of Central Florida, where
-          I also completed both my Bachelor’s and Master’s degrees in Computer Science. Growing up in 
+          I also completed both my Bachelor’s and Master’s degrees in Computer Science. Growing up in
           Florida with an early passion for graphic design helped me fall in love with
           our local theme parks, where immersive experiences are designed with deep care and detail." />
         </p>
