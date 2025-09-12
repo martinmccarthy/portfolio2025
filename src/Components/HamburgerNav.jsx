@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import MenuButton from './MenuButton'
 
-export default function HamburgerNav({ active = 'home', onHome, onMenu, onAbout }) {
+export default function HamburgerNav({ active = 'home', onHome, onMenu, onPortfolio, onAbout }) {
   const [open, setOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -14,11 +14,11 @@ export default function HamburgerNav({ active = 'home', onHome, onMenu, onAbout 
     mq.addEventListener('change', update)
     return () => mq.removeEventListener('change', update)
   }, [])
-
-  const dropdownBg = active === 'menu' ? 'black' : 'white'
-  const textColor   = active === 'menu' ? 'white' : 'black'
-  const borderColor = active === 'menu' ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'
-
+  const isDark = active === 'menu' || active === 'portfolio'
+  const dropdownBg = isDark ? 'black' : 'white'
+  const textColor   = isDark ? 'white' : 'black'
+  const borderColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.35)'
+  
   const Item = ({ label, onClick, isActive }) => (
     <motion.button
       className="button"
@@ -132,9 +132,10 @@ export default function HamburgerNav({ active = 'home', onHome, onMenu, onAbout 
             transition={{ type: 'tween', duration: 0.18 }}
             style={dropdownStyle}
           >
-            <Item label="Home"  onClick={onHome}  isActive={active === 'home'} />
-            <Item label="My Work"  onClick={onMenu}  isActive={active === 'menu'} />
-            <Item label="About" onClick={onAbout} isActive={active === 'about'} />
+            <Item label="Home"      onClick={onHome}      isActive={active === 'home'} />
+            <Item label="My Work"   onClick={onMenu}      isActive={active === 'menu'} />
+            <Item label="Portfolio" onClick={onPortfolio} isActive={active === 'portfolio'} />
+            <Item label="About"     onClick={onAbout}     isActive={active === 'about'} />
           </motion.div>
         )}
       </AnimatePresence>

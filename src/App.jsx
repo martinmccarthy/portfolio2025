@@ -7,6 +7,7 @@ import Menu from './Components/Menu'
 import AnimatedCursor from "react-animated-cursor";
 import About from './Components/About'
 import HamburgerNav from './Components/HamburgerNav'
+import Portfolio from './Components/Portfolio'
 
 function WireModel({ src, y = 0, rotationRef, ...props }) {
   const { scene } = useGLTF(src)
@@ -318,6 +319,7 @@ export default function App() {
   const handleSwap = () => setLabelIndex(i => (i + 1) % labels.length)
   const [volume, setVolume] = useState(0.35)
   const [showMenu, setShowMenu] = useState(false)
+  const [showPortfolio, setShowPortfolio] = useState(false)
 
   useEffect(() => {
     let lastTouchY = 0
@@ -353,8 +355,7 @@ export default function App() {
   }, [showMenu])
   
 
-    const active = showAbout ? 'about' : (showMenu ? 'menu' : 'home')
-
+  const active = showAbout ? 'about' : (showPortfolio ? 'portfolio' : (showMenu ? 'menu' : 'home'))
   return (
     <>
       <BackgroundAudio src="/audio/bg4.mp3" volume={volume} />
@@ -370,9 +371,10 @@ export default function App() {
       />
       <HamburgerNav
         active={active}
-        onHome={() => { setShowAbout(false); setShowMenu(false); window.scrollTo(0, 0); }}
-        onMenu={() => { setShowAbout(false); setShowMenu(true);  window.scrollTo(0, 0); }}
-        onAbout={() => { setShowMenu(false);  setShowAbout(true); window.scrollTo(0, 0); }}
+        onHome={() => { setShowAbout(false); setShowMenu(false); setShowPortfolio(false); window.scrollTo(0, 0); }}
+        onMenu={() => { setShowAbout(false); setShowPortfolio(false); setShowMenu(true);  window.scrollTo(0, 0); }}
+        onPortfolio={() => { setShowAbout(false); setShowMenu(false); setShowPortfolio(true); window.scrollTo(0, 0); }}
+        onAbout={() => { setShowMenu(false); setShowPortfolio(false); setShowAbout(true); window.scrollTo(0, 0); }}
       />
 
       <Canvas camera={{ position: [0, 0, 5], fov: 50 }} style={{ width: '100vw', height: '100vh' }}>
@@ -383,91 +385,107 @@ export default function App() {
       <h1 className="idesign" style={{ color:'white', position: 'absolute', top: '70vh', margin: 0, fontSize: '.8em', letterSpacing: '0.04em', width: '100vw', textAlign: 'center', fontFamily: "AzeretMono" }}>
         i <ScrambleText key={labels[labelIndex].toUpperCase()} text={labels[labelIndex].toLowerCase()} duration={650} />
       </h1>
-      <h1 className="myname" style={{ color:'white', position: 'absolute', top: '2vh', margin: 0, marginLeft: '3vw', letterSpacing: '0.04em', textAlign: 'center', fontFamily: "AzeretMono" }}>martin mccarthy</h1>
+      <h1 className="myname" style={{ color:'white', position: 'absolute', top: 'max(10px, calc(env(safe-area-inset-top, 0px) + 8px))', margin: 0, marginLeft: '3vw', letterSpacing: '0.04em', textAlign: 'center', fontFamily: "AzeretMono" }}>martin mccarthy</h1>
       <Scroll />
-      <AnimatePresence>
-        {showMenu && (
+  <AnimatePresence>
+    {showMenu && (
+      <motion.div
+        initial={{ height: 0 }}
+        animate={{ height: '100vh' }}
+        exit={{ height: 0 }}
+        transition={{ duration: 1.4, ease: 'easeInOut' }}
+        style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 20, overflow: 'hidden' }}
+      >
+        {[...Array(8)].map((_, i) => (
           <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: '100vh' }}
-            exit={{ height: 0 }}
-            transition={{ duration: 1.4, ease: 'easeInOut' }}
+            key={i}
+            initial={{ y: -200, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: i * 0.1, duration: 0.8 }}
             style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              zIndex: 20,
-              overflow: 'hidden',
+              width: '100%',
+              height: `${100 / 8}vh`,
+              background: 'rgba(255,255,255,0.9)',
+              borderBottom: '1px solid rgba(255,255,255,0.08)'
             }}
-          >
-            {[...Array(8)].map((_, i) => (
-              <motion.div
-                key={i}
-                initial={{ y: -200, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{
-                  delay: i * 0.1,
-                  duration: 0.8,
-                }}
-                style={{
-                  width: '100%',
-                  height: `${100 / 8}vh`,
-                  background: 'rgba(255,255,255,0.9)',
-                  borderBottom: '1px solid rgba(255,255,255,0.08)',
-                }}
-              />
-            ))}
+          />
+        ))}
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.6 }}
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                overflow: 'auto',
-                backdropFilter: 'blur(6px)',
-                WebkitBackdropFilter: 'blur(6px)',
-              }}
-            >
-              <Menu onExitTop={() => {setShowMenu(false); console.log('exiting')}} onExitBottom={() => setShowAbout(true)}/>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <AnimatePresence>
-        {showAbout && (
-          <motion.div
-            initial={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
-            animate={{ clipPath: 'circle(140% at 90% 10%)', opacity: 1 }}
-            exit={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
-            transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 25,
-              background: 'rgba(255,255,255,0.96)',
-              backdropFilter: 'blur(8px)',
-              WebkitBackdropFilter: 'blur(8px)',
-              overflow: 'hidden'
-            }}
-          >
-            <motion.div
-              initial={{ y: 24, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 24, opacity: 0 }}
-              transition={{ duration: 0.45, ease: 'easeOut', delay: 0.25 }}
-              style={{ height: '100%' }}
-            >
-              <About onExitTop={() => { setShowAbout(false); setShowMenu(true); }} />            
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.8, duration: 0.6 }}
+          style={{
+            position: 'absolute',
+            top: 0, left: 0, right: 0, bottom: 0,
+            overflow: 'auto',
+            backdropFilter: 'blur(6px)',
+            WebkitBackdropFilter: 'blur(6px)'
+          }}
+        >
+          <Menu
+            onExitTop={() => { setShowMenu(false) }}
+            onExitBottom={() => { setShowPortfolio(true) }}
+          />
+        </motion.div>
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  <AnimatePresence>
+    {showPortfolio && (
+      <motion.div
+        initial={{ y: '100vh', opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: '100vh', opacity: 0 }}
+        transition={{ duration: 0.9, ease: [0.65, 0, 0.35, 1] }}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 23,
+          background: 'rgba(255,255,255,0.96)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          overflow: 'hidden'
+        }}
+      >
+        <Portfolio
+          onExitTop={() => { setShowPortfolio(false); setShowMenu(true) }}
+          onExitBottom={() => { setShowPortfolio(false); setShowAbout(true) }}
+        />
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  <AnimatePresence>
+    {showAbout && (
+      <motion.div
+        initial={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
+        animate={{ clipPath: 'circle(140% at 90% 10%)', opacity: 1 }}
+        exit={{ clipPath: 'circle(0% at 90% 10%)', opacity: 0 }}
+        transition={{ duration: 1.1, ease: [0.65, 0, 0.35, 1] }}
+        style={{
+          position: 'fixed',
+          inset: 0,
+          zIndex: 25,
+          background: 'rgba(255,255,255,0.96)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          overflow: 'hidden'
+        }}
+      >
+        <motion.div
+          initial={{ y: 24, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 24, opacity: 0 }}
+          transition={{ duration: 0.45, ease: 'easeOut', delay: 0.25 }}
+          style={{ height: '100%' }}
+        >
+          <About onExitTop={() => { setShowAbout(false); setShowPortfolio(true) }} />
+        </motion.div>
+      </motion.div>
+    )}
+  </AnimatePresence>
     </>
   )
 }
