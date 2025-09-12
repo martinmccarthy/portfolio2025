@@ -6,7 +6,7 @@ export default function MenuButton({
   width = 24,
   height = 24,
   strokeWidth = 1.8,
-  active = 'home', // <- new prop to know which section
+  active = 'home',
   transition = { type: 'tween', duration: 0.18 },
   lineProps = {},
   ...props
@@ -26,8 +26,8 @@ export default function MenuButton({
     opened: { rotate: -45, translateY: -2 },
   }
 
-  // pick stroke color based on active section
-  const color = active === 'menu' ? '#000' : '#fff'
+  const isDark = active === 'menu' || active === 'portfolio'
+  const color = isDark ? '#fff' : '#000'
 
   const lp = {
     stroke: color,
@@ -50,7 +50,7 @@ export default function MenuButton({
       preserveAspectRatio="none"
       width={width}
       height={height}
-      style={{ mixBlendMode: 'difference' }}
+      style={{ mixBlendMode: isDark ? 'normal' : 'difference' }}
       {...props}
     >
       <motion.line x1="0" x2={unitWidth} y1="1" y2="1" variants={top} {...lp} />
